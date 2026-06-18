@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>安心办</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <h1>安心办</h1>
+      <p class="subtitle">看不懂的，我帮你读</p>
+      <p class="tagline">医保、银行、政务 App 里看不懂的内容，粘过来就行。</p>
+    </header>
+
+    <section id="scene-step" class="panel active">
+      <h2 class="section-title">选择场景</h2>
+      <div class="scenes">
+        <button class="scene-card" data-scene="medical">
+          <svg class="scene-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          <span class="scene-text">
+            <strong>医保</strong>
+            <span>医保的事，我帮你看</span>
+          </span>
+        </button>
+        <button class="scene-card" data-scene="bank">
+          <svg class="scene-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/>
+          </svg>
+          <span class="scene-text">
+            <strong>银行</strong>
+            <span>银行的事，先看清再做</span>
+          </span>
+        </button>
+        <button class="scene-card" data-scene="government">
+          <svg class="scene-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-7h6v7"/>
+          </svg>
+          <span class="scene-text">
+            <strong>政务</strong>
+            <span>政务的事，一步一步来</span>
+          </span>
+        </button>
+      </div>
+      <button class="fallback-entry" data-scene="general">
+        <span class="fallback-text">
+          <strong>不知道选哪个？</strong>
+          <span>看不懂的，先放这里</span>
+        </span>
+        <span class="fallback-action">直接帮我看看</span>
+      </button>
+      <p class="note">拿不准的，先问家人再点。</p>
+    </section>
+
+    <section id="input-step" class="panel hidden">
+      <button id="back-to-scene" class="btn-ghost">返回</button>
+      <h2 id="scene-title" class="section-title">请输入说明</h2>
+      <label id="field-label" class="field-label" for="instruction-text">把看不懂的字粘过来</label>
+      <textarea id="instruction-text" rows="8" placeholder="例如：医保待遇资格认证，按提示完成操作。"></textarea>
+      <p class="note">别填身份证号、银行卡号、密码、验证码。</p>
+      <button id="generate-button" class="btn-primary">帮我看一下</button>
+      <p id="input-error" class="error hidden"></p>
+    </section>
+
+    <section id="result-step" class="panel hidden">
+      <button id="back-to-input" class="btn-ghost">返回修改</button>
+      <div id="priority-risk" class="risk-alert hidden"></div>
+
+      <article class="card">
+        <h2 id="explanation-title" class="card-title">这段说明在讲什么</h2>
+        <p id="explanation-summary" class="card-body"></p>
+        <ul id="explanation-tips" class="tips"></ul>
+      </article>
+
+      <article class="card">
+        <h2 class="card-title">怎么做</h2>
+        <div id="step-card" class="step"></div>
+        <div class="step-nav">
+          <button id="prev-step" class="btn-ghost">上一步</button>
+          <span id="step-position"></span>
+          <button id="next-step" class="btn-primary">下一步</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2 class="card-title">安全提醒</h2>
+        <p id="default-risk" class="card-body"></p>
+        <div class="actions">
+          <button class="btn-hint" type="button">先找家人确认</button>
+          <button class="btn-hint" type="button">联系官方渠道</button>
+        </div>
+        <p id="hint-message" class="hint-message hidden"></p>
+      </article>
+    </section>
+
+    <section id="status-step" class="panel hidden">
+      <h2 id="status-title" class="section-title">正在帮你看</h2>
+      <p id="status-message" class="card-body">稍等一下，马上就好。</p>
+      <button id="status-back" class="btn-ghost hidden">返回修改</button>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>

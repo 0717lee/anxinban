@@ -1,0 +1,614 @@
+/* ============================================================
+   安心办 · 克制版样式
+   目标：大字、高对比、少装饰、老人可读、移动端优先
+   ============================================================ */
+
+:root {
+  /* 背景与表面 */
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+
+  /* 文字 */
+  --ink: #1f1a14;
+  --ink-soft: #5c544a;
+  --ink-muted: #8a8275;
+
+  /* 边框 */
+  --line: #e0dccf;
+  --line-soft: #ece8de;
+
+  /* 主色 —— 单一克制的暖红 */
+  --accent: #b8431f;
+  --accent-deep: #933515;
+  --accent-soft: #f7ece6;
+
+  /* 高风险 */
+  --alert: #8b1f0f;
+  --alert-bg: #fbeee9;
+  --alert-border: #c44530;
+
+  /* 安全动作 —— 稳重墨绿 */
+  --safe: #3d5a3d;
+  --safe-soft: #e8efe6;
+
+  /* 阴影 —— 单一极简 */
+  --shadow: 0 1px 3px rgba(31, 26, 20, 0.06);
+  --shadow-card: 0 2px 8px rgba(31, 26, 20, 0.05);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 17px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Source Han Sans SC", "Noto Sans CJK SC", "WenQuanYi Micro Hei", sans-serif;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ============================================================
+   布局
+   ============================================================ */
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  min-height: 100vh;
+  padding: 24px 18px 48px;
+}
+
+/* ============================================================
+   页头
+   ============================================================ */
+
+.header {
+  text-align: center;
+  padding: 16px 0 28px;
+}
+
+.header h1 {
+  font-size: 44px;
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 20px;
+  color: var(--ink-soft);
+  font-weight: 500;
+}
+
+.tagline {
+  margin-top: 12px;
+  font-size: 17px;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  max-width: 32em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================================================
+   面板
+   ============================================================ */
+
+.panel {
+  display: none;
+}
+
+.panel.active {
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ============================================================
+   区块标题
+   ============================================================ */
+
+.section-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 20px;
+  line-height: 1.35;
+}
+
+/* ============================================================
+   首页 · 场景选择
+   ============================================================ */
+
+.scenes {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.scene-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 92px;
+  padding: 18px 20px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.scene-card:hover,
+.scene-card:active {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.scene-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  color: var(--accent);
+}
+
+.scene-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.scene-text strong {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.scene-text span {
+  color: var(--ink-muted);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+/* ============================================================
+   提示条 / 备注
+   ============================================================ */
+
+.note {
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  padding: 12px 14px;
+  background: var(--line-soft);
+  border-radius: 10px;
+}
+
+/* ============================================================
+   兜底入口（辅助，不喧宾夺主）
+   ============================================================ */
+
+.fallback-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px;
+  margin-top: 4px;
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.fallback-entry:hover,
+.fallback-entry:active {
+  border-color: var(--accent);
+  border-style: solid;
+  background: var(--accent-soft);
+}
+
+.fallback-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.fallback-text strong {
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.fallback-text span {
+  font-size: 15px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+.fallback-action {
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   输入页
+   ============================================================ */
+
+.field-label {
+  display: block;
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 200px;
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  padding: 16px 18px;
+  font-size: 21px;
+  font-family: inherit;
+  line-height: 1.7;
+  color: var(--ink);
+  background: var(--surface);
+  resize: vertical;
+  transition: border-color 0.15s ease;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+textarea::placeholder {
+  color: var(--ink-muted);
+}
+
+/* ============================================================
+   按钮
+   ============================================================ */
+
+.btn-primary,
+.btn-ghost,
+.btn-hint {
+  width: 100%;
+  border-radius: 14px;
+  font-size: 22px;
+  font-weight: 700;
+  padding: 16px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  margin-top: 16px;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-primary:active:not(:disabled) {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--ink-soft);
+  border-color: var(--line);
+  margin-bottom: 16px;
+}
+
+.btn-ghost:hover:not(:disabled),
+.btn-ghost:active:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-hint {
+  background: var(--safe-soft);
+  color: var(--safe);
+  border-color: var(--safe);
+  font-size: 20px;
+  padding: 14px 12px;
+}
+
+.btn-hint:hover,
+.btn-hint:active {
+  background: var(--safe);
+  color: #fff;
+}
+
+.btn-primary:disabled,
+.btn-ghost:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   结果页 · 卡片
+   ============================================================ */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-card);
+}
+
+.card-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.card-body {
+  font-size: 21px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.tips {
+  padding-left: 22px;
+  font-size: 19px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+  margin-top: 12px;
+}
+
+.tips li {
+  margin-bottom: 4px;
+}
+
+/* ============================================================
+   步骤卡
+   ============================================================ */
+
+.step {
+  min-height: 160px;
+  padding: 20px 18px;
+  border-radius: 12px;
+  background: var(--bg);
+  border: 1px solid var(--line-soft);
+}
+
+.step strong {
+  display: block;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.step p {
+  font-size: 22px;
+  line-height: 1.8;
+  color: var(--ink);
+}
+
+.step-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.step-nav .btn-ghost,
+.step-nav .btn-primary {
+  margin: 0;
+  padding: 14px;
+  font-size: 20px;
+}
+
+#step-position {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  padding: 0 6px;
+}
+
+/* ============================================================
+   高风险提醒
+   ============================================================ */
+
+.risk-alert {
+  background: var(--alert-bg);
+  border: 2px solid var(--alert-border);
+  border-radius: 14px;
+  padding: 20px 18px;
+  margin-bottom: 16px;
+  color: var(--alert);
+  font-size: 21px;
+  line-height: 1.7;
+  font-weight: 700;
+}
+
+/* ============================================================
+   安全提醒动作区
+   ============================================================ */
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.hint-message {
+  margin-top: 14px;
+  padding: 14px 16px;
+  background: var(--safe-soft);
+  border-left: 4px solid var(--safe);
+  border-radius: 0 10px 10px 0;
+  color: var(--safe);
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   状态页
+   ============================================================ */
+
+#status-message {
+  font-size: 21px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  margin-bottom: 20px;
+}
+
+/* ============================================================
+   错误文本
+   ============================================================ */
+
+.error {
+  color: var(--alert);
+  font-size: 19px;
+  font-weight: 700;
+  padding: 12px 14px;
+  background: var(--alert-bg);
+  border-radius: 10px;
+  margin-top: 14px;
+}
+
+/* ============================================================
+   移动端适配
+   ============================================================ */
+
+@media (max-width: 640px) {
+  html {
+    font-size: 16px;
+  }
+
+  .app {
+    padding: 20px 14px 36px;
+  }
+
+  .header {
+    padding: 10px 0 22px;
+  }
+
+  .header h1 {
+    font-size: 38px;
+  }
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+  .tagline {
+    font-size: 15px;
+  }
+
+  .section-title {
+    font-size: 26px;
+  }
+
+  .scene-card {
+    min-height: 84px;
+    padding: 16px 18px;
+    gap: 14px;
+  }
+
+  .scene-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .scene-text strong {
+    font-size: 23px;
+  }
+
+  .scene-text span {
+    font-size: 15px;
+  }
+
+  .field-label,
+  textarea {
+    font-size: 19px;
+  }
+
+  .btn-primary,
+  .btn-ghost,
+  .btn-hint {
+    font-size: 20px;
+    padding: 15px;
+  }
+
+  .card {
+    padding: 20px 18px;
+  }
+
+  .card-title {
+    font-size: 23px;
+  }
+
+  .card-body {
+    font-size: 19px;
+  }
+
+  .step strong {
+    font-size: 21px;
+  }
+
+  .step p {
+    font-size: 20px;
+  }
+
+  .risk-alert {
+    font-size: 19px;
+    padding: 18px 16px;
+  }
+
+  .step-nav {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  #step-position {
+    order: -1;
+    margin-bottom: 4px;
+  }
+}
