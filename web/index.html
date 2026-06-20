@@ -67,7 +67,23 @@
 
     <section id="result-step" class="panel hidden">
       <button id="back-to-input" class="btn-ghost">返回修改</button>
+
+      <div id="safety-verdict" class="verdict hidden">
+        <span id="verdict-icon" class="verdict-icon"></span>
+        <div class="verdict-body">
+          <strong id="verdict-title"></strong>
+          <span id="verdict-desc"></span>
+        </div>
+      </div>
+
       <div id="priority-risk" class="risk-alert hidden"></div>
+      <div id="risk-actions" class="risk-actions hidden">
+        <div class="actions">
+          <button class="btn-hint" type="button">先找家人确认</button>
+          <button class="btn-hint" type="button">联系官方渠道</button>
+        </div>
+        <p id="hint-message" class="hint-message hidden"></p>
+      </div>
 
       <article class="card">
         <h2 id="explanation-title" class="card-title">这段说明在讲什么</h2>
@@ -85,15 +101,6 @@
         </div>
       </article>
 
-      <article class="card">
-        <h2 class="card-title">安全提醒</h2>
-        <p id="default-risk" class="card-body"></p>
-        <div class="actions">
-          <button class="btn-hint" type="button">先找家人确认</button>
-          <button class="btn-hint" type="button">联系官方渠道</button>
-        </div>
-        <p id="hint-message" class="hint-message hidden"></p>
-      </article>
     </section>
 
     <section id="status-step" class="panel hidden">

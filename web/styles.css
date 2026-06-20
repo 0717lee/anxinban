@@ -445,6 +445,79 @@ textarea::placeholder {
 }
 
 /* ============================================================
+   安全结论卡（顶部置顶）
+   ============================================================ */
+
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 18px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  border: 2px solid;
+}
+
+.verdict-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.verdict-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.verdict-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.verdict-body strong {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.verdict-body span {
+  font-size: 17px;
+  line-height: 1.5;
+  opacity: 0.85;
+}
+
+/* low：墨绿 */
+.verdict-low {
+  background: var(--safe-soft);
+  border-color: var(--safe);
+  color: var(--safe);
+}
+.verdict-low .verdict-icon { background: var(--safe); }
+
+/* medium：琥珀 */
+.verdict-medium {
+  background: #fef7e6;
+  border-color: #b8860b;
+  color: #8a6508;
+}
+.verdict-medium .verdict-icon { background: #b8860b; }
+
+/* high：红，置顶醒目 */
+.verdict-high {
+  background: var(--alert-bg);
+  border-color: var(--alert-border);
+  color: var(--alert);
+}
+.verdict-high .verdict-icon { background: var(--alert); }
+
+/* ============================================================
    高风险提醒
    ============================================================ */
 
@@ -461,8 +534,16 @@ textarea::placeholder {
 }
 
 /* ============================================================
-   安全提醒动作区
+   高风险动作区
    ============================================================ */
+
+.risk-actions {
+  margin-bottom: 16px;
+}
+
+.risk-actions .actions {
+  margin-top: 0;
+}
 
 .actions {
   display: grid;
@@ -595,6 +676,29 @@ textarea::placeholder {
   .risk-alert {
     font-size: 19px;
     padding: 18px 16px;
+  }
+
+  .verdict {
+    padding: 16px 14px;
+    gap: 12px;
+  }
+
+  .verdict-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .verdict-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .verdict-body strong {
+    font-size: 21px;
+  }
+
+  .verdict-body span {
+    font-size: 15px;
   }
 
   .step-nav {

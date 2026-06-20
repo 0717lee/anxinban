@@ -16,13 +16,48 @@ const explanationTitle = document.getElementById('explanation-title');
 const explanationSummary = document.getElementById('explanation-summary');
 const explanationTips = document.getElementById('explanation-tips');
 const priorityRisk = document.getElementById('priority-risk');
-const defaultRisk = document.getElementById('default-risk');
+const riskActions = document.getElementById('risk-actions');
 const stepCard = document.getElementById('step-card');
 const stepPosition = document.getElementById('step-position');
 const prevStep = document.getElementById('prev-step');
 const nextStep = document.getElementById('next-step');
 const hintButtons = document.querySelectorAll('.btn-hint');
 const hintMessage = document.getElementById('hint-message');
+
+const verdictBox = document.getElementById('safety-verdict');
+const verdictIcon = document.getElementById('verdict-icon');
+const verdictTitle = document.getElementById('verdict-title');
+const verdictDesc = document.getElementById('verdict-desc');
+
+const verdictConfig = {
+  low: {
+    cls: 'verdict-low',
+    svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>',
+    title: '可以继续办',
+    desc: '按下面步骤来就行'
+  },
+  medium: {
+    cls: 'verdict-medium',
+    svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10M12 17v3"/></svg>',
+    title: '先看清楚，再继续',
+    desc: '有些地方要注意'
+  },
+  high: {
+    cls: 'verdict-high',
+    svg: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6l-12 12"/></svg>',
+    title: '先别点，可能有风险',
+    desc: '先找家人或官方渠道确认'
+  }
+};
+
+function renderVerdict(riskLevel) {
+  const config = verdictConfig[riskLevel] || verdictConfig.medium;
+  verdictBox.className = `verdict ${config.cls}`;
+  verdictIcon.innerHTML = config.svg;
+  verdictTitle.textContent = config.title;
+  verdictDesc.textContent = config.desc;
+  verdictBox.classList.remove('hidden');
+}
 
 let selectedScene = '';
 let currentSteps = [];
@@ -73,10 +108,17 @@ hintButtons.forEach((button) => {
 
 document.querySelectorAll('.scene-card, .fallback-entry').forEach((button) => {
   button.addEventListener('click', () => {
-    selectedScene = button.dataset.scene;
+    const nextScene = button.dataset.scene;
+
+    if (selectedScene && selectedScene !== nextScene) {
+      instructionText.value = '';
+    }
+
+    selectedScene = nextScene;
     const copy = sceneCopy[selectedScene];
     sceneTitle.textContent = copy.title;
     fieldLabel.textContent = copy.label;
+    inputError.textContent = '';
     inputError.classList.add('hidden');
     showPanel(inputStep);
   });
@@ -109,12 +151,22 @@ generateButton.addEventListener('click', async () => {
     return;
   }
 
-  if (!instructionText.value.trim()) {
+  const pastedText = instructionText.value.trim();
+
+  if (!pastedText) {
     inputError.textContent = '请先把看不懂的字粘过来。';
     inputError.classList.remove('hidden');
     return;
   }
 
+  if (pastedText.length < 10) {
+    inputError.textContent = '这段太短了，多贴几句完整说明。';
+    inputError.classList.remove('hidden');
+    return;
+  }
+
+  generateButton.disabled = true;
+  generateButton.textContent = '正在看...';
   statusTitle.textContent = '正在帮你看';
   statusMessage.textContent = '稍等一下，马上就好。';
   statusBack.classList.add('hidden');
@@ -124,7 +176,7 @@ generateButton.addEventListener('click', async () => {
     const response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ scene: selectedScene, text: instructionText.value.trim() })
+      body: JSON.stringify({ scene: selectedScene, text: pastedText })
     });
 
     const result = await response.json();
@@ -134,6 +186,7 @@ generateButton.addEventListener('click', async () => {
     }
 
     const data = result.data;
+    renderVerdict(data.riskLevel);
     explanationTitle.textContent = data.plainExplanation.title;
     explanationSummary.textContent = data.plainExplanation.summary;
     explanationTips.innerHTML = '';
@@ -147,15 +200,14 @@ generateButton.addEventListener('click', async () => {
     currentStepIndex = 0;
     renderStep();
 
-    defaultRisk.textContent = data.safety.defaultReminder;
-
     if (data.riskLevel === 'high') {
       priorityRisk.textContent = data.safety.priorityReminder;
       priorityRisk.classList.remove('hidden');
-      defaultRisk.textContent = `${data.safety.defaultReminder} 风险词：${data.riskTags.join('、')}`;
+      riskActions.classList.remove('hidden');
     } else {
       priorityRisk.classList.add('hidden');
       priorityRisk.textContent = '';
+      riskActions.classList.add('hidden');
     }
 
     showPanel(resultStep);
@@ -163,5 +215,8 @@ generateButton.addEventListener('click', async () => {
     statusTitle.textContent = '没看成功';
     statusMessage.textContent = error.message;
     statusBack.classList.remove('hidden');
+  } finally {
+    generateButton.disabled = false;
+    generateButton.textContent = '帮我看一下';
   }
 });

@@ -51,6 +51,7 @@ const MAX_BODY_SIZE = 20 * 1024;
 const AI_TIMEOUT_MS = 15000;
 
 const RISK_KEYWORDS = ['验证码', '密码', '银行卡', '转账', '付款', '收费', '链接', '陌生电话', '账户冻结'];
+const ATTENTION_KEYWORDS = ['证件原件', '到社区', '窗口', '现场核对', '本人信息', '提交材料', '等待审核', '线下办理', '预约'];
 
 function sendJson(response, statusCode, payload) {
   response.writeHead(statusCode, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -129,7 +130,10 @@ function buildPrompt(scene, text) {
     '要求：',
     '1. 通俗解释要简单，适合老人阅读。',
     '2. 步骤卡每步只表达一个动作。',
-    '3. 涉及验证码、密码、银行卡、转账、付款、收费、链接、陌生电话、账户冻结等内容时，提高 riskLevel。',
+    '3. riskLevel 判定标准：',
+    '   - low：这是一段正常说明，老人可以按步骤继续办。',
+    '   - medium：说明里有需要注意的地方（比如要带证件、要去现场、要核对信息），先看清楚再继续。',
+    '   - high：说明里涉及验证码、密码、银行卡、转账、付款、收费、链接、陌生电话、账户冻结等高风险内容，先别点。',
     '4. actions 固定返回“先找家人确认”和“联系官方渠道”。'
   ].join('\n');
 }
@@ -215,6 +219,7 @@ function validateAiData(data, scene) {
 
 function applyRiskFallback(data, text) {
   const matchedKeywords = RISK_KEYWORDS.filter((keyword) => text.includes(keyword));
+  const matchedAttentionKeywords = ATTENTION_KEYWORDS.filter((keyword) => text.includes(keyword));
   const mergedTags = Array.from(new Set([...(data.riskTags || []), ...matchedKeywords]));
 
   data.riskTags = mergedTags;
@@ -222,6 +227,9 @@ function applyRiskFallback(data, text) {
   if (matchedKeywords.length > 0) {
     data.riskLevel = 'high';
     data.safety.priorityReminder = `发现高风险内容：${matchedKeywords.join('、')}。不要直接继续，请先联系官方渠道或家人确认。`;
+  } else if (data.riskLevel === 'low' && matchedAttentionKeywords.length > 0) {
+    data.riskLevel = 'medium';
+    data.riskTags = Array.from(new Set([...mergedTags, ...matchedAttentionKeywords]));
   }
 
   return data;

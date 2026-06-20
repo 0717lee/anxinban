@@ -269,3 +269,121 @@
 - 旧截图 `final-06/07/08` 不是有效移动端证据，已用上述三张替代。
 - 验证过程中发现移动端模拟下 `click` 工具偶尔不触发 fetch 请求，改用 `evaluate_script` 直接触发 `generate-button.click()` 后正常。这是 MCP 工具在移动端模拟下的已知行为，不影响产品本身功能。
 - 当前状态按要求停下，不进入部署。
+
+## 部署完成
+
+### Git 初始化与推送
+
+- 初始化 git 仓库，确认 .env 不被跟踪（.gitignore 已排除 .env 和 screenshots/）。
+- 提交 16 个文件（代码+文档），commit message：`安心办 MVP：完成部署前验收`。
+- 推送到 GitHub：https://github.com/0717lee/anxinban（main 分支）。
+- 真实 Key 扫描确认：所有提交文件中无真实 Key，.env.example 只有空值模板。
+
+### Render 部署
+
+- 部署平台：Render 免费版
+- 线上地址：https://anxinban.onrender.com/
+- 配置的环境变量：DASHSCOPE_API_KEY、OPENAI_BASE_URL、OPENAI_MODEL
+- Build Command: `npm install`，Start Command: `npm start`
+- 注意：Render 免费版 15 分钟无请求会休眠，首次唤醒需约 30 秒。
+
+### 线上验收（Chrome DevTools MCP）
+
+- 首页：场景卡片 + 兜底入口 + 价值说明 + 安全备注全部正常，已截图 `screenshots/deploy-01-online-home.png` ✅
+- 医保主流程：输入页 → 状态页 → 结果页（通俗解释+步骤卡3步+安全提醒+动作按钮）完整跑通，已截图 `screenshots/deploy-02-online-medical-result.png` ✅
+- 银行高风险流程：高风险置顶提醒 + 风险词展示（验证码、密码、银行卡、链接）+ 步骤卡4步 + 安全提醒 + 动作按钮全部正常，已截图 `screenshots/deploy-03-online-bank-high-risk.png` ✅
+- 控制台：无任何错误（连 favicon 404 都没有）✅
+
+### 部署结论
+
+安心办 MVP 已成功部署到 Render，线上主流程（医保普通+银行高风险）全部验证通过，可对外演示。
+
+## 提交材料整理完成
+
+### 文档更新与新增
+
+- 更新 `docs/SCORECARD.md`：从阶段一状态更新为部署后最终状态，四个评分维度全部标记为已完成，阶段一短板（callAi 未接入真实 AI）已全部修复。
+- 新增 `docs/SUBMIT.md`：提交清单文档，包含项目基本信息、代码与文档清单、11 张代表性截图清单、线上演示地址、环境变量配置、安全声明。
+- 新增 `docs/POST.md`：作品帖文案，包含问题背景、产品用法、设计思路、技术方案、开发过程、线上演示路径、代码文档链接、一句话总结。
+
+### 截图筛选与归档
+
+- 从 25 张截图中筛选 11 张代表性截图，按类别分目录归档到 `submit/`：
+  - `01-首页与场景/`：1 张（桌面首页）
+  - `02-医保主流程/`：3 张（输入页、结果页、页面内提示）
+  - `03-银行高风险/`：1 张（高风险结果页）
+  - `04-移动端/`：3 张（390×844 首页、医保输入、医保结果）
+  - `05-线上部署/`：3 张（Render 线上首页、医保结果、银行高风险）
+- 其余 14 张截图保留在 `screenshots/` 作为完整开发过程证据，不提交。
+
+### 提交材料总结
+
+- 代码：GitHub 仓库 https://github.com/0717lee/anxinban
+- 线上演示：https://anxinban.onrender.com/
+- 文档：7 份核心文档（PRD/UI/TECH/PLAN/SCORECARD/AI-VALIDATION/SUBMIT）+ 作品帖文案（POST.md）
+- 截图：11 张代表性截图，按类别分目录
+- 安全：.env 未提交，真实 Key 只在 Render 环境变量中
+
+## 安全结论卡升级（差异化强化）
+
+### 升级目标
+
+把安心办从"AI 解释说明"强化成"老人安全操作陪跑"：结果页顶部新增"能不能继续操作"安全结论卡，老人第一眼先得到明确结论，再看解释和步骤。
+
+### 代码改动
+
+- 后端 `server/index.js`：`buildPrompt` 中 `riskLevel` 判定标准从模糊描述改为明确三档说明（low/medium/high），让 AI 输出更稳定。
+- 后端 `server/index.js`：新增 `ATTENTION_KEYWORDS` 注意事项窄兜底；当 AI 返回 low 且无高风险词，但文本出现证件原件、窗口、现场核对等办事注意词时，稳定升为 medium。
+- 前端 `web/index.html`：在 `#back-to-input` 和 `#priority-risk` 之间新增 `#safety-verdict` 结论卡容器（图标 + 标题 + 说明）。
+- 前端 `web/app.js`：新增 `verdictConfig` 三档配置（含内联 SVG 图标、文案、CSS 类名）和 `renderVerdict(riskLevel)` 函数，在生成成功分支调用。
+- 前端 `web/styles.css`：新增 `.verdict` 系列样式（三档颜色：绿/琥珀/红、圆形 SVG 图标底色、移动端 390×844 适配）。
+- 不改接口结构，不加新功能，不引入新依赖。
+
+### 三档文案
+
+- low：标题"可以继续办"，说明"按下面步骤来就行"，绿色，勾形 SVG。
+- medium：标题"先看清楚，再继续"，说明"有些地方要注意"，琥珀色，感叹形 SVG。
+- high：标题"先别点，可能有风险"，说明"先找家人或官方渠道确认"，红色，叉形 SVG。
+
+### 验证结果（Chrome DevTools MCP + 后端 curl）
+
+- 医保普通说明：结论卡绿色"可以继续办 / 按下面步骤来就行" ✅，已截图 `screenshots/verdict-01-medical-low.png`
+- 银行高风险说明：结论卡红色"先别点，可能有风险 / 先找家人或官方渠道确认"，风险提醒条仍正常显示 ✅，已截图 `screenshots/verdict-02-bank-high.png`
+- 政务 medium 样例（携带证件原件到社区服务中心窗口办理，现场核对本人信息后完成登记）：接口复验返回 `riskLevel=medium`，结论卡琥珀色"先看清楚，再继续 / 有些地方要注意" ✅，已截图 `screenshots/verdict-03-government-medium.png`
+- 通用入口（general 场景）：结论卡按 `riskLevel` 正常显示（low 绿色"可以继续办"）✅，已截图 `screenshots/verdict-04-general-low.png`
+- 移动端 390×844（emulate `390x844x2,mobile,touch`）：
+  - 医保 low：结论卡不挤压，布局正常 ✅，已截图 `screenshots/verdict-05-mobile-medical-low.png`
+  - 银行 high：结论卡 + 风险提醒条同时显示，布局不挤压 ✅，已截图 `screenshots/verdict-06-mobile-bank-high.png`
+- 控制台：无 error、无 warn ✅
+- 本轮补充复验：`medical-low` 返回 `riskLevel=low`，`government-medium` 返回 `riskLevel=medium`，`bank-high` 返回 `riskLevel=high`，三档输出稳定。
+
+### 文档更新
+
+- `docs/PRD.md`：新增 4.5 安全结论卡功能节，7.3 安全验收新增结论卡验收标准。
+- `docs/UI.md`：2.3 解释与步骤页新增结论卡区域，4 组件说明新增 4.7 安全结论卡，5.1 默认状态和 5.5 高风险提醒状态新增结论卡说明。
+- `docs/SCORECARD.md`：新增第 5 节"安全结论卡升级（差异化强化）"，说明升级目标、实现内容、验证结果、评分价值。
+
+### 当前状态
+
+安全结论卡升级已完成代码实现、本地验证和文档更新。当前状态按要求停下，不进入部署。
+## 结果页安全提醒去重
+
+- 根据用户反馈“最下面的安全提醒似乎没有太大必要”，已移除结果页底部独立“安全提醒”卡，减少重复阅读负担。
+- 前端 `web/index.html`：删除底部安全提醒卡；新增 `#risk-actions`，将“先找家人确认 / 联系官方渠道”移动到顶部高风险提醒下方。
+- 前端 `web/app.js`：删除 `defaultRisk` 渲染逻辑；仅当 `riskLevel === "high"` 时显示 `priorityRisk` 和 `riskActions`；普通/中风险只展示安全结论卡、通俗解释、步骤卡。
+- 前端 `web/styles.css`：将安全动作区调整为高风险动作区，保留移动端单列适配。
+- 文档同步：更新 PRD、UI、TECH、SCORECARD、SUBMIT、POST，统一为“顶部结论卡常驻，高风险才显示提醒条和确认按钮”。
+
+## 场景输入隔离与过短定义
+
+- 用户反馈：在医保输入框输入的内容，切到银行、政务等其他场景时仍能看到，容易误以为不同场景共用了同一份内容。
+- 前端 `web/app.js` 已调整：点击不同场景入口时，如果新场景与当前场景不同，则清空输入框；同一场景返回修改时继续保留原输入，方便修正。
+- 输入过短统一定义为：前后端都先执行 `trim()`，去掉前后空白后长度为 0 是 `TEXT_REQUIRED`，长度为 1-9 个字符是 `TEXT_TOO_SHORT`。
+- 前端已增加同口径校验：少于 10 个字符时直接提示“这段太短了，多贴几句完整说明。”，不再等后端返回后才提示。
+
+## Bug 体检与重复提交保护
+
+- 按 bug review 视角检查当前前后端主链路：DOM id 引用、静态资源、输入校验、场景切换、按钮状态、基础接口错误码。
+- 发现一个演示风险：生成按钮未禁用，用户连续点击可能重复触发 AI 请求，造成重复扣费或结果状态抖动。
+- 前端 `web/app.js` 已修复：通过前端校验后立即禁用“帮我看一下”按钮并改为“正在看...”，请求成功或失败后统一恢复。
+- 验证通过：`node --check web/app.js`、`node --check server/index.js`、DOM id 对齐、静态资源 200、接口错误码、前端事件流（切场景清空/短文本不发请求/按钮禁用恢复）。
