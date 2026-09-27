@@ -311,7 +311,7 @@ function serveStatic(request, response) {
   const filePath = path.resolve(publicDir, safePath);
   const extension = path.extname(filePath).toLowerCase();
 
-  if (!isPathInside(publicDir, filePath) && filePath !== path.resolve(publicDir, 'index.html')) {
+  if (!isPathInside(publicDir, filePath)) {
     response.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
     response.end('Forbidden');
     return;

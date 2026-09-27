@@ -56,7 +56,6 @@ function renderVerdict(riskLevel) {
   verdictIcon.innerHTML = config.svg;
   verdictTitle.textContent = config.title;
   verdictDesc.textContent = config.desc;
-  verdictBox.classList.remove('hidden');
 }
 
 let selectedScene = '';

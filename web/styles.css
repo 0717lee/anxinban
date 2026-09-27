@@ -32,7 +32,6 @@
   --safe-soft: #e8efe6;
 
   /* 阴影 —— 单一极简 */
-  --shadow: 0 1px 3px rgba(31, 26, 20, 0.06);
   --shadow-card: 0 2px 8px rgba(31, 26, 20, 0.05);
 }
 
